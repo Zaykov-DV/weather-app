@@ -1,17 +1,37 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AddCity from '../views/AddCity.vue'
 import Weather from '../views/Weather.vue'
+import Register from '../views/Register.vue'
+import Login from '../views/Login.vue'
+import MainPage from '../views/MainPage.vue'
 
 const routes = [
   {
     path: '/',
-    name: 'AddCity',
-    component: AddCity
+    name: 'Login',
+    component: Login
   },
   {
-    path: '/weather/:city',
-    name: 'Weather',
-    component: Weather
+    path: '/register',
+    name: 'Register',
+    component: Register
+  },
+  {
+    path: '/main/',
+    name: 'MainPage',
+    component: MainPage,
+    children: [
+      {
+        path: '/main/weather/:city',
+        name: 'Weather',
+        component: Weather
+      },
+      {
+        path: '/main/',
+        name: 'AddCity',
+        component: AddCity
+      },
+    ]
   },
 ]
 

@@ -28,7 +28,7 @@ import AdditionalInfo from '@/components/AdditionalInfo'
 
 export default {
   name: "Weather",
-  props: ['APIkey', 'isDay', 'isNight'],
+  props: ['APIkey', 'isDay', 'isNight', 'userid'],
   components: {
     CurrentWeather,
     HourlyWeather,

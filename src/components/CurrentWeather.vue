@@ -37,6 +37,7 @@ export default {
   name: "CurrentWeather",
   props: ['isDay', 'isNight', 'currentWeather']
 }
+
 </script>
 
 <style lang="scss" scoped>
