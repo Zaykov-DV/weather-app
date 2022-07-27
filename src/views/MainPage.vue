@@ -24,9 +24,10 @@
                    v-on:resetDays="resetDays"
                    v-on:add-city="toggleModal"
       />
-<!--      <AddCity v-if="!loading"-->
-<!--               :cities="citiesFilter"-->
-<!--               :edit="edit"/>-->
+      <AddCity v-on:add-city="toggleModal"
+               v-if="!loading"
+               :cities="citiesFilter"
+               :edit="edit"/>
       <Loading v-if="loading"></Loading>
     </div>
   </main>
@@ -40,12 +41,12 @@ import Modal from "@/components/UI/Modal";
 import Loading from "@/components/UI/Loading";
 import firebase from "firebase";
 import 'firebase/auth'
-// import AddCity from "./AddCity";
+import AddCity from "./AddCity";
 
 export default {
   name: 'MainPage',
   components: {
-    // AddCity,
+    AddCity,
     Loading, Navigation, Modal
   },
   data() {
