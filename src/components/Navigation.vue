@@ -16,6 +16,10 @@
             <i @click="addCity" class="fa fa-plus"></i>
             Add city
           </span>
+          <span class="navigation__action">
+            <i @click="handleSignOut" class="fa fa-sign-out-alt"></i>
+            Exit
+          </span>
         </div>
       </div>
     </nav>
@@ -41,9 +45,11 @@
 </template>
 
 <script>
+import { signOut } from 'firebase/auth'
+
 export default {
   name: "Navigation",
-  props: ['addCityActive', 'isDay', 'isNight'],
+  props: ['addCityActive', 'isDay', 'isNight', 'auth'],
   methods: {
     addCity() {
       this.$emit('add-city')
@@ -54,6 +60,11 @@ export default {
     editCities() {
       this.$refs.editCities.classList.toggle('is-active')
       this.$emit('edit-cities')
+    },
+    handleSignOut() {
+      signOut(this.auth).then(() => {
+        this.$router.push('/')
+      })
     }
   }
 }

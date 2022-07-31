@@ -3,6 +3,7 @@
     <div class="main__container">
       <Navigation v-on:add-city="toggleModal"
                   v-on:edit-cities="toggleEdit"
+                  :auth="auth"
                   :addCityActive="addCityActive"
                   :userId="userId"
                   :isDay="isDay"
@@ -39,9 +40,10 @@ import db from './../firebase/firebaseInit'
 import Navigation from "@/components/Navigation";
 import Modal from "@/components/UI/Modal";
 import Loading from "@/components/UI/Loading";
-import firebase from "firebase";
+import firebase from "firebase/compat";
 import 'firebase/auth'
 import AddCity from "./AddCity";
+import {getAuth} from "firebase/auth";
 
 export default {
   name: 'MainPage',
@@ -60,7 +62,9 @@ export default {
       isDay: null,
       isNight: null,
       loading: true,
-      userId: ''
+      userId: '',
+      isLoggedIn: false,
+      auth: null
     }
   },
   created() {
@@ -81,15 +85,17 @@ export default {
     },
     getCityWeather() {
       let firebaseDB = db.collection('cities')
-
-      firebase.auth().onAuthStateChanged((user) => {
+      this.auth = getAuth();
+      firebase.auth().onAuthStateChanged(this.auth,(user) => {
         if (user) {
+          this.isLoggedIn = true
           // User logged in already or has just logged in.
           console.log('User logged in or has just logged out.')
           console.log(user.uid);
           this.userId = user.uid
           this.$emit('getUserId', user.uid)
         } else {
+          this.isLoggedIn = false
           // User not logged in or has just logged out.
           console.log('User not logged in or has just logged out.')
         }
