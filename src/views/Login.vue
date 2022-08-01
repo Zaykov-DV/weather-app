@@ -50,7 +50,7 @@ const signIn = () => {
   const auth = getAuth()
   signInWithEmailAndPassword(auth, email.value, password.value)
       .then(() => {
-        router.push({name: 'MainPage'});
+        router.push({name: 'AddCity'});
         console.log('login')
         errorMessage.value = ''
       })
@@ -77,7 +77,7 @@ const signInWithGoogle = () => {
   signInWithPopup(getAuth(), provider)
       .then((result) => {
         console.log(result.user)
-        router.push({name: 'MainPage'});
+        router.push({name: 'AddCity'});
       })
       .catch((error) => {
         errorMessage.value = error

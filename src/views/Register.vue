@@ -96,7 +96,7 @@ const register = async () => {
   })
       .then(() => {
         console.log('Successfully registered')
-        router.push({name: 'MainPage'})
+        router.push({name: 'AddCity'})
       })
       .catch((error) => {
         switch (error.code) {
@@ -121,7 +121,7 @@ const signInWithGoogle = () => {
   signInWithPopup(getAuth(), provider)
       .then((result) => {
         console.log(result.user)
-        router.push({name: 'MainPage'})
+        router.push({name: 'AddCity'})
       })
       .catch((error) => {
         errorMsg.value = error

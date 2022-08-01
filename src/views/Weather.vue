@@ -46,7 +46,7 @@ export default {
   created() {
     this.getWeather()
   },
-  beforeUnmount() {
+  unmounted() {
     this.$emit('resetDays')
   },
   methods: {
@@ -62,9 +62,11 @@ export default {
                   .then(res => this.forecast = res.data)
                   .then(() => {
                     this.loading = false
-                    this.getCurrentTime()
                   })
             })
+          })
+          .then(() => {
+            this.getCurrentTime()
           })
     },
     getCurrentTime() {
