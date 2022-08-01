@@ -6,7 +6,7 @@
         <router-link class="router-link" :to="{ name: 'Register' }">Register</router-link>
       </p>
       <h2 class="auth__title">Login to WeatherApp</h2>
-      <form class="auth__inputs" >
+      <form class="auth__inputs" @submit.prevent="signIn">
         <div class="auth__input">
           <input type="text" placeholder="Email" v-model="email">
         </div>
@@ -19,14 +19,14 @@
           </div>
         </div>
         <div class="auth__actions">
-          <button class="auth__button" @click.prevent="signIn">Sign In</button>
+          <button class="auth__button" type="submit">Sign In</button>
           <button class="auth__button" @click="signInWithGoogle">
             <i class="auth__button-icon fab fa-google"></i>
             Sign in with Google
           </button>
         </div>
       </form>
-      <span v-show="errorMessage !== ''">{{errorMessage}}</span>
+      <span class="auth__error" v-show="errorMessage !== ''">{{errorMessage}}</span>
     </div>
   </div>
 </template>
@@ -73,16 +73,21 @@ const signIn = () => {
 }
 
 const signInWithGoogle = () => {
+  const auth = getAuth();
+  console.log(auth)
   const provider = new GoogleAuthProvider();
-  signInWithPopup(getAuth(), provider)
+  console.log(provider)
+  signInWithPopup(auth, provider)
       .then((result) => {
         console.log(result.user)
-        router.push({name: 'AddCity'});
+        router.push({name: 'AddCity'})
       })
       .catch((error) => {
         errorMessage.value = error
+        console.log(error)
       })
 }
+
 </script>
 
 
@@ -112,6 +117,12 @@ const signInWithGoogle = () => {
   &__title {
     color: #fff;
     margin-bottom: 20px;
+  }
+
+  &__error {
+    font-size: 14px;
+    color: indianred;
+    margin-top: 2px;
   }
 
   &__inputs {
