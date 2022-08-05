@@ -1,5 +1,5 @@
 <template>
-  <div class="auth register">
+  <div class="auth">
     <div class="auth__container">
       <p class="auth__link">
         Already have an account?
@@ -36,7 +36,7 @@
             Sign in with Google</button>
         </div>
       </form>
-      <span class="register__error">{{ errorMsg }}</span>
+      <span class="auth__error">{{ errorMsg }}</span>
     </div>
   </div>
 </template>
@@ -119,6 +119,7 @@ const register = async () => {
 const signInWithGoogle = () => {
   const provider = new GoogleAuthProvider();
   signInWithPopup(getAuth(), provider)
+
       .then((result) => {
         console.log(result.user)
         router.push({name: 'AddCity'})
@@ -127,16 +128,5 @@ const signInWithGoogle = () => {
         errorMsg.value = error
       })
 }
+
 </script>
-
-<style lang="scss" scoped>
-
-.register {
-  &__error {
-    font-size: 14px;
-    color: indianred;
-    margin-top: 2px;
-  }
-}
-
-</style>

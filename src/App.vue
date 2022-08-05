@@ -87,7 +87,7 @@ export default {
     getCityWeather() {
       let firebaseDB = db.collection('cities')
       this.auth = getAuth();
-      firebase.auth().onAuthStateChanged(this.auth,(user) => {
+      firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           this.isLoggedIn = true
           // User logged in already or has just logged in.
