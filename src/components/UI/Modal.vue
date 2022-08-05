@@ -14,7 +14,7 @@ import db from '../../firebase/firebaseInit'
 
 export default {
   name: "Modal",
-  props: ['APIkey', 'cities'],
+  props: ['APIkey', 'cities', 'userId'],
   data() {
     return {
       city: '',
@@ -27,8 +27,8 @@ export default {
     async addCity() {
       if (this.city === '') {
         alert('field cannot be empty')
-      } else if (this.cities.some(res => res.city === this.city.toLowerCase())) {
-        alert(`${this.city.toLowerCase()} already added`)
+      } else if (this.cities.some(res => res.city === this.city.toLowerCase()) && this.cities.some(res => res.city.userId === this.userId())) {
+        alert(`${this.city[0].toUpperCase() + this.city.slice(1).toLowerCase()} already added`)
       } else {
         try {
           const res = await axios
@@ -39,6 +39,7 @@ export default {
               .set({
                 city: this.city.toLowerCase(),
                 currentWeather: data,
+                userId: this.userId
               })
               .then(this.$emit('close-modal'))
               .then(this.city = '')

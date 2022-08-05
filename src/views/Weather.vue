@@ -28,7 +28,7 @@ import AdditionalInfo from '@/components/AdditionalInfo'
 
 export default {
   name: "Weather",
-  props: ['APIkey', 'isDay', 'isNight'],
+  props: ['APIkey', 'isDay', 'isNight', 'userid'],
   components: {
     CurrentWeather,
     HourlyWeather,
@@ -46,7 +46,7 @@ export default {
   created() {
     this.getWeather()
   },
-  beforeUnmount() {
+  unmounted() {
     this.$emit('resetDays')
   },
   methods: {
@@ -62,9 +62,11 @@ export default {
                   .then(res => this.forecast = res.data)
                   .then(() => {
                     this.loading = false
-                    this.getCurrentTime()
                   })
             })
+          })
+          .then(() => {
+            this.getCurrentTime()
           })
     },
     getCurrentTime() {

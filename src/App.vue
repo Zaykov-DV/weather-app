@@ -1,21 +1,26 @@
 <template>
   <main class="main">
     <div class="main__container">
-      <Navigation v-on:add-city="toggleModal"
+      <Navigation v-if="!authPage"
+                  v-on:add-city="toggleModal"
                   v-on:edit-cities="toggleEdit"
+                  :auth="auth"
                   :addCityActive="addCityActive"
+                  :userId="userId"
                   :isDay="isDay"
                   :isNight="isNight"/>
       <Modal v-show="modalOpen"
              v-on:close-modal="toggleModal"
-             :cities="cities"
+             :cities="citiesFilter"
+             :userId="userId"
              :APIkey="APIkey"/>
-      <router-view v-if="loading === false"
-                   :cities="cities"
+      <router-view v-if="!loading"
+                   :cities="citiesFilter"
                    :edit="edit"
                    :APIkey="APIkey"
                    :isDay="isDay"
                    :isNight="isNight"
+                   :userId="userId"
                    v-on:is-day="dayTime"
                    v-on:is-night="nightTime"
                    v-on:resetDays="resetDays"
@@ -23,7 +28,6 @@
       />
       <Loading v-if="loading"></Loading>
     </div>
-
   </main>
 </template>
 
@@ -32,21 +36,33 @@ import axios from 'axios'
 import db from './firebase/firebaseInit'
 import Navigation from "@/components/Navigation";
 import Modal from "@/components/UI/Modal";
-import Loading from "./components/UI/Loading";
+import Loading from "@/components/UI/Loading";
+import firebase from "firebase/compat";
+import 'firebase/auth'
+// import AddCity from "./views/AddCity";
+import {getAuth} from "firebase/auth";
 
 export default {
   name: 'App',
-  components: {Loading, Navigation, Modal},
+  components: {
+    // AddCity,
+    Loading, Navigation, Modal
+  },
   data() {
     return {
       APIkey: '215522eb8b33fb9868dcd0b9043f15c8',
       cities: [],
+      citiesFilter: [],
       modalOpen: false,
       edit: false,
-      addCityActive: false,
+      addCityActive: true,
       isDay: null,
       isNight: null,
-      loading: true
+      loading: true,
+      userId: '',
+      isLoggedIn: false,
+      auth: null,
+      authPage: false
     }
   },
   created() {
@@ -62,8 +78,29 @@ export default {
     checkRoute() {
       this.addCityActive = this.$route.name === 'AddCity';
     },
+    checkAuthRoute() {
+      this.authPage = this.$route.name === 'Login' || this.$route.name === 'Register'
+    },
+    getUserId(data) {
+      this.userId = data;
+    },
     getCityWeather() {
-      let firebaseDB = db.collection('cities');
+      let firebaseDB = db.collection('cities')
+      this.auth = getAuth();
+      firebase.auth().onAuthStateChanged(this.auth,(user) => {
+        if (user) {
+          this.isLoggedIn = true
+          // User logged in already or has just logged in.
+          console.log('User logged in or has just logged out.')
+          console.log(user.uid);
+          this.userId = user.uid
+          this.$emit('getUserId', user.uid)
+        } else {
+          this.isLoggedIn = false
+          // User not logged in or has just logged out.
+          console.log('User not logged in or has just logged out.')
+        }
+      });
 
       firebaseDB.onSnapshot(snap => {
         if (snap.docs.length === 0) this.loading = false
@@ -79,18 +116,27 @@ export default {
               await firebaseDB.doc(doc.doc.id).update({
                 currentWeather: data,
                 id: doc.doc.id
-              }).then(() => {
-                this.cities.push(doc.doc.data())
-                this.loading = false
               })
+                  .then(() => {
+                    this.cities.push(doc.doc.data())
+                  })
+                  .then(() => {
+                    this.citiesFilter = this.cities.filter((city) => {
+                      return city.userId === this.userId
+                    })
+                  })
+                  .then(() => {
+                    this.loading = false
+                  })
             } catch (error) {
               console.log(error)
             }
           } else if (doc.type === 'removed') {
-            this.cities = this.cities.filter(city => city.id !== doc.doc.id)
+            this.citiesFilter = this.citiesFilter.filter(city => city.id !== doc.doc.id)
           }
         })
       })
+
     },
     dayTime() {
       this.isDay = !this.isDay
@@ -106,6 +152,7 @@ export default {
   watch: {
     $route() {
       this.checkRoute()
+      this.checkAuthRoute()
     }
   }
 }

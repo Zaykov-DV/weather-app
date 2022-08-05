@@ -17,7 +17,7 @@ import City from "@/components/City";
 export default {
   name: 'AddCity',
   components: {City},
-  props: ['cities', 'edit'],
+  props: ['cities', 'edit', 'cityId'],
   methods: {
     addCity() {
       this.$emit('add-city')

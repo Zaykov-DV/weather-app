@@ -4,9 +4,22 @@
       <div class="navigation__container">
         <h2 class="navigation__title">Add City</h2>
         <div class="navigation__actions">
-          <i @click="editCities" ref="editCities" class="fa fa-edit"></i>
-          <i @click="reloadApp" class="fa fa-sync"></i>
-          <i @click="addCity" class="fa fa-plus"></i>
+          <span class="navigation__action">
+            <i @click="editCities" ref="editCities" class="fa fa-edit"></i>
+            Edit cities
+          </span>
+          <span class="navigation__action">
+            <i @click="reloadApp" class="fa fa-sync"></i>
+            Refresh
+          </span>
+          <span class="navigation__action">
+            <i @click="addCity" class="fa fa-plus"></i>
+            Add city
+          </span>
+          <span class="navigation__action">
+            <i @click="handleSignOut" class="fa fa-sign-out-alt"></i>
+            Exit
+          </span>
         </div>
       </div>
     </nav>
@@ -32,9 +45,11 @@
 </template>
 
 <script>
+import { signOut } from 'firebase/auth'
+
 export default {
   name: "Navigation",
-  props: ['addCityActive', 'isDay', 'isNight'],
+  props: ['addCityActive', 'isDay', 'isNight', 'auth'],
   methods: {
     addCity() {
       this.$emit('add-city')
@@ -45,6 +60,11 @@ export default {
     editCities() {
       this.$refs.editCities.classList.toggle('is-active')
       this.$emit('edit-cities')
+    },
+    handleSignOut() {
+      signOut(this.auth).then(() => {
+        this.$router.push('/login')
+      })
     }
   }
 }
@@ -81,9 +101,20 @@ export default {
   }
 
   &__actions {
+    display: flex;
+    align-items: center;
+  }
+
+  &__action {
+    margin-left: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 12px;
+
     i {
-      margin-left: 16px;
       font-size: 18px;
+      padding-bottom: 4px;
 
       &.is-active {
         color: #D24B4B;
