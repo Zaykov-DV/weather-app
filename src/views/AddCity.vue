@@ -1,7 +1,7 @@
 <template>
   <div class="add-city">
     <div class="add-city__container">
-        <City v-for="(city, index) in cities" :key="index" :city="city" :edit="edit"/>
+        <City v-for="(city, index) in cities" :key="index" :city="city" :edit="edit" :userId="userId"/>
       <div class="add-city__empty" v-if="cities.length === 0">
         <p class="add-city__text">No cities added, add a new one?</p>
         <button class="add-city__button" @click="addCity()">Add city</button>
@@ -17,7 +17,7 @@ import City from "@/components/City";
 export default {
   name: 'AddCity',
   components: {City},
-  props: ['cities', 'edit', 'cityId'],
+  props: ['cities', 'edit', 'userId'],
   methods: {
     addCity() {
       this.$emit('add-city')
