@@ -24,7 +24,7 @@ import db from '../firebase/firebaseInit'
 
 export default {
   name: "City",
-  props: ['city', 'edit'],
+  props: ['city', 'edit', 'userId'],
   data() {
     return {
       id: null
@@ -34,6 +34,7 @@ export default {
     removeCity() {
       db.collection('cities')
           .where('city', '==', `${this.city.city}`)
+          .where('userId', '==', `${this.userId}`)
           .get()
           .then(docs => {
             docs.forEach(doc => {
@@ -41,7 +42,7 @@ export default {
             })
           })
           .then(() => {
-            db.collection('cities').doc(this.id).delete()
+              db.collection('cities').doc(this.id).delete()
           })
     },
     goToWeather(e) {
