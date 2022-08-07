@@ -7,12 +7,10 @@
       </p>
       <h2 class="auth__title">Login to WeatherApp</h2>
       <form class="auth__inputs" @submit.prevent="signIn">
+        <BaseInput class="auth__input" type="text" placeholder="Email" v-model="email"/>
         <div class="auth__input">
-          <input type="text" placeholder="Email" v-model="email">
-        </div>
-        <div class="auth__input">
-          <input v-if="showPassword" type="text" placeholder="Password" v-model="password">
-          <input v-else type="password" placeholder="Password" v-model="password">
+          <BaseInput v-if="showPassword" type="text" placeholder="Password" v-model="password"/>
+          <BaseInput v-else type="password" placeholder="Password" v-model="password"/>
           <div class="auth__icon" @click="toggleShow">
             <i v-if="showPassword" class="fa fa-solid fa-eye"></i>
             <i v-if="!showPassword" class="fa fa-solid fa-eye-slash"></i>
@@ -26,15 +24,20 @@
           </button>
         </div>
       </form>
-      <span class="auth__error" v-show="errorMessage !== ''">{{errorMessage}}</span>
+      <span class="auth__error" v-show="errorMessage !== ''">{{ errorMessage }}</span>
+
+      <p class="auth__link">
+        <router-link class="router-link" :to="{ name: 'Register' }">Forgot password?</router-link>
+      </p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { signInWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
-import { useRouter } from 'vue-router'
+import {ref} from 'vue'
+import {signInWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithPopup} from 'firebase/auth'
+import {useRouter} from 'vue-router'
+import BaseInput from "../components/UI/BaseInput";
 
 const email = ref('')
 const password = ref('')
@@ -127,6 +130,7 @@ const signInWithGoogle = () => {
 
   &__inputs {
     width: 80%;
+    margin-bottom: 20px;
   }
 
   &__input {
@@ -140,20 +144,6 @@ const signInWithGoogle = () => {
       align-items: flex-start;
       flex-direction: column;
       margin-bottom: 16px;
-    }
-
-    input {
-      width: 100%;
-      border: none;
-      background-color: #f2f7f6;
-      padding: 4px 4px 4px 30px;
-      height: 40px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-
-      &:focus {
-        outline: none;
-      }
     }
   }
 

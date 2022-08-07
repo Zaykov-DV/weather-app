@@ -79,7 +79,7 @@ export default {
       this.addCityActive = this.$route.name === 'AddCity';
     },
     checkAuthRoute() {
-      this.authPage = this.$route.name === 'Login' || this.$route.name === 'Register'
+      this.authPage = this.$route.name === 'Login' || this.$route.name === 'Register' || this.$route.name === 'NotFound'
     },
     getUserId(data) {
       this.userId = data;
