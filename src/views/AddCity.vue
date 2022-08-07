@@ -4,23 +4,32 @@
         <City v-for="(city, index) in cities" :key="index" :city="city" :edit="edit" :userId="userId"/>
       <div class="add-city__empty" v-if="cities.length === 0">
         <p class="add-city__text">No cities added, add a new one?</p>
-        <button class="add-city__button" @click="addCity()">Add city</button>
+        <button class="add-city__button" @click="addCity">Add city</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 import City from "@/components/City";
 
 export default {
   name: 'AddCity',
-  components: {City},
-  props: ['cities', 'edit', 'userId'],
-  methods: {
-    addCity() {
-      this.$emit('add-city')
+  components: { City },
+  props: {
+    cities: Array,
+    edit: Boolean,
+    userId: String
+},
+
+  setup(_, {emit}) {
+
+    const addCity = (event) => {
+      emit("add-city", event.target.value)
+    }
+
+    return {
+      addCity
     }
   }
 }

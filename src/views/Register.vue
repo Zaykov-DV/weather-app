@@ -7,18 +7,17 @@
       </p>
       <h2 class="auth__title">Create Your Account</h2>
       <form class="auth__inputs" @submit.prevent="submitForm">
-        <!--@TODO reusable form input components-->
         <div class="auth__input auth__input_register">
-          <input type="text" placeholder="Username" v-model="formData.username">
+          <BaseInput type="text" placeholder="Username" v-model="formData.username" />
           <span class="register__error" v-for="error in v$.username.$errors" :key="error.$uid">{{ error.$message }}</span>
         </div>
         <div class="auth__input auth__input_register">
-          <input type="text" placeholder="Email" v-model="formData.email">
+          <BaseInput type="text" placeholder="Email" v-model="formData.email" />
           <span class="register__error" v-for="error in v$.email.$errors" :key="error.$uid">{{ error.$message }}</span>
         </div>
         <div class="auth__input auth__input_register">
-          <input v-if="showPassword" type="text" class="input" v-model="formData.password"/>
-          <input v-else type="password" placeholder="Password" v-model="formData.password">
+          <BaseInput v-if="showPassword" type="text" class="input" v-model="formData.password" />
+          <BaseInput v-else type="password" placeholder="Password" v-model="formData.password" />
           <div class="auth__icon" @click="toggleShow">
            <i v-if="showPassword" class="fa fa-solid fa-eye"></i>
             <i v-if="!showPassword" class="fa fa-solid fa-eye-slash"></i>
@@ -26,7 +25,7 @@
           <span class="register__error" v-for="error in v$.password.$errors" :key="error.$uid">{{ error.$message }}</span>
         </div>
         <div class="auth__input auth__input_register">
-          <input type="password" placeholder="Confirm password" v-model="formData.confirmPassword">
+          <BaseInput type="password" placeholder="Confirm password" v-model="formData.confirmPassword" />
           <span class="register__error" v-for="error in v$.confirmPassword.$errors" :key="error.$uid">{{ error.$message }}</span>
         </div>
         <div class="auth__actions">
@@ -48,6 +47,7 @@ import {useRouter} from 'vue-router'
 import useVuelidate from '@vuelidate/core'
 import {minLength, required, sameAs, email, helpers} from '@vuelidate/validators'
 import db from "../firebase/firebaseInit";
+import BaseInput from "../components/UI/BaseInput";
 
 const formData = reactive({
   username: '',

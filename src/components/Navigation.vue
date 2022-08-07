@@ -2,7 +2,7 @@
   <header v-if="addCityActive">
     <nav class="navigation">
       <div class="navigation__container">
-        <h2 class="navigation__title">Add City</h2>
+        <h2 class="navigation__title">Weather</h2>
         <div class="navigation__actions">
           <span class="navigation__action">
             <i @click="editCities" ref="editCities" class="fa fa-edit"></i>
