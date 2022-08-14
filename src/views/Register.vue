@@ -3,21 +3,21 @@
     <div class="auth__container">
       <p class="auth__link">
         Already have an account?
-        <router-link class="router-link" :to="{ name: 'Login' }">Login</router-link>
+        <router-link class="router-link" :to="{ name: 'Login' }">{{ $t("auth.login") }}</router-link>
       </p>
-      <h2 class="auth__title">Create Your Account</h2>
+      <h2 class="auth__title">{{ $t("auth.create") }}</h2>
       <form class="auth__inputs" @submit.prevent="submitForm">
         <div class="auth__input auth__input_register">
-          <BaseInput type="text" placeholder="Username" v-model="formData.username" />
+          <BaseInput type="text" :placeholder="$t('auth.placeholders.username')" v-model="formData.username" />
           <span class="register__error" v-for="error in v$.username.$errors" :key="error.$uid">{{ error.$message }}</span>
         </div>
         <div class="auth__input auth__input_register">
-          <BaseInput type="text" placeholder="Email" v-model="formData.email" />
+          <BaseInput type="text" :placeholder="$t('auth.placeholders.email')" v-model="formData.email" />
           <span class="register__error" v-for="error in v$.email.$errors" :key="error.$uid">{{ error.$message }}</span>
         </div>
         <div class="auth__input auth__input_register">
           <BaseInput v-if="showPassword" type="text" class="input" v-model="formData.password" />
-          <BaseInput v-else type="password" placeholder="Password" v-model="formData.password" />
+          <BaseInput v-else type="password" :placeholder="$t('auth.placeholders.password')" v-model="formData.password" />
           <div class="auth__icon" @click="toggleShow">
            <i v-if="showPassword" class="fa fa-solid fa-eye"></i>
             <i v-if="!showPassword" class="fa fa-solid fa-eye-slash"></i>
@@ -25,14 +25,14 @@
           <span class="register__error" v-for="error in v$.password.$errors" :key="error.$uid">{{ error.$message }}</span>
         </div>
         <div class="auth__input auth__input_register">
-          <BaseInput type="password" placeholder="Confirm password" v-model="formData.confirmPassword" />
+          <BaseInput type="password" :placeholder="$t('auth.placeholders.confirm')" v-model="formData.confirmPassword" />
           <span class="register__error" v-for="error in v$.confirmPassword.$errors" :key="error.$uid">{{ error.$message }}</span>
         </div>
         <div class="auth__actions">
-          <button class="auth__button" type="submit">Sign Up</button>
+          <button class="auth__button" type="submit">{{ $t("auth.signup") }}</button>
           <button class="auth__button" @click="signInWithGoogle">
             <i class="auth__button-icon fab fa-google"></i>
-            Sign in with Google</button>
+            {{ $t("auth.google") }}</button>
         </div>
       </form>
       <span class="auth__error">{{ errorMsg }}</span>

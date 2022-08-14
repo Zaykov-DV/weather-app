@@ -2,7 +2,8 @@
   <div class="daily-forecast">
     <div class="daily-forecast__container">
       <div class="daily-forecast__day">
-        <span>{{ new Date(this.day.dt * 1000).toLocaleString('en-us', { weekday: 'long' }) }}</span>
+        <span v-if="$i18n.locale === 'en'">{{ new Date(this.day.dt * 1000).toLocaleString('en-us', { weekday: 'long' }) }}</span>
+        <span v-if="$i18n.locale === 'ru'">{{ new Date(this.day.dt * 1000).toLocaleString('ru-ru', { weekday: 'long' }) }}</span>
       </div>
       <div class="daily-forecast__condition">
         <img class="daily-forecast__icon"
@@ -47,7 +48,8 @@ export default {
     height: auto;
   }
 
-  &__temperature {
+  &__day {
+    text-transform: capitalize;
   }
 }
 

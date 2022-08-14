@@ -20,7 +20,7 @@
           <span>{{ this.currentWeather.weather[0].description }}</span>
         </div>
         <div class="current-weather__feels-like">
-          <span>Feels like {{ Math.round(this.currentWeather.main.feels_like) }}&deg;C</span>
+          <span>{{ $t('info.feels') }} {{ Math.round(this.currentWeather.main.feels_like) }}&deg;C</span>
         </div>
       </div>
       <div class="current-weather__icon">
