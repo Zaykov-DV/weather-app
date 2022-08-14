@@ -1,11 +1,9 @@
 <template>
   <main class="main">
     <div class="main__container">
-      <Navigation v-if="!authPage"
-                  v-on:add-city="toggleModal"
-                  v-on:edit-cities="toggleEdit"
-                  :auth="auth"
+      <Navigation :auth="auth"
                   :addCityActive="addCityActive"
+                  :authPage="authPage"
                   :userId="userId"
                   :isDay="isDay"
                   :isNight="isNight"/>
@@ -26,7 +24,12 @@
                    v-on:resetDays="resetDays"
                    v-on:add-city="toggleModal"
       />
-      <Loading v-if="loading"></Loading>
+      <Loading v-if="loading" />
+      <Footer v-if="!authPage"
+              :addCityActive="addCityActive"
+              v-on:add-city="toggleModal"
+              v-on:edit-cities="toggleEdit"
+              :auth="auth"/>
     </div>
   </main>
 </template>
@@ -39,14 +42,13 @@ import Modal from "@/components/UI/Modal";
 import Loading from "@/components/UI/Loading";
 import firebase from "firebase/compat";
 import 'firebase/auth'
-// import AddCity from "./views/AddCity";
-import {getAuth} from "firebase/auth";
+import { getAuth } from "firebase/auth";
+import Footer from "./components/Footer";
 
 export default {
   name: 'App',
   components: {
-    // AddCity,
-    Loading, Navigation, Modal
+    Footer, Loading, Navigation, Modal
   },
   data() {
     return {
@@ -62,7 +64,8 @@ export default {
       userId: '',
       isLoggedIn: false,
       auth: null,
-      authPage: false
+      authPage: false,
+      lang: null
     }
   },
   created() {

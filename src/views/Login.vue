@@ -2,14 +2,14 @@
   <div class="auth">
     <div class="auth__container">
       <p class="auth__link">
-        Don't have an account?
-        <router-link class="router-link" :to="{ name: 'Register' }">Register</router-link>
+        {{ $t("auth.check") }}
+        <router-link class="router-link" :to="{ name: 'Register' }">{{ $t("auth.register") }}</router-link>
       </p>
-      <h2 class="auth__title">Login to WeatherApp</h2>
+      <h2 class="auth__title">{{ $t("auth.loginText") }}</h2>
       <form class="auth__inputs" @submit.prevent="signIn">
-        <BaseInput class="auth__input" type="text" placeholder="Email" v-model="email"/>
+        <BaseInput class="auth__input" type="text" :placeholder="$t('auth.placeholders.email')" v-model="email"/>
         <div class="auth__input">
-          <BaseInput v-if="showPassword" type="text" placeholder="Password" v-model="password"/>
+          <BaseInput v-if="showPassword" type="text" :placeholder="$t('auth.placeholders.password')" v-model="password"/>
           <BaseInput v-else type="password" placeholder="Password" v-model="password"/>
           <div class="auth__icon" @click="toggleShow">
             <i v-if="showPassword" class="fa fa-solid fa-eye"></i>
@@ -17,17 +17,17 @@
           </div>
         </div>
         <div class="auth__actions">
-          <button class="auth__button" type="submit">Sign In</button>
+          <button class="auth__button" type="submit">{{ $t("auth.signin") }}</button>
           <button class="auth__button" @click="signInWithGoogle">
             <i class="auth__button-icon fab fa-google"></i>
-            Sign in with Google
+            {{ $t("auth.google") }}
           </button>
         </div>
       </form>
       <span class="auth__error" v-show="errorMessage !== ''">{{ errorMessage }}</span>
 
       <p class="auth__link">
-        <router-link class="router-link" :to="{ name: 'Register' }">Forgot password?</router-link>
+        <router-link class="router-link" :to="{ name: 'Register' }">{{ $t("auth.forgot") }}</router-link>
       </p>
     </div>
   </div>

@@ -1,25 +1,17 @@
 <template>
-  <header v-if="addCityActive">
+  <header v-if="addCityActive || authPage">
     <nav class="navigation">
       <div class="navigation__container">
-        <h2 class="navigation__title">Weather</h2>
-        <div class="navigation__actions">
-          <span class="navigation__action">
-            <i @click="editCities" ref="editCities" class="fa fa-edit"></i>
-            Edit cities
-          </span>
-          <span class="navigation__action">
-            <i @click="reloadApp" class="fa fa-sync"></i>
-            Refresh
-          </span>
-          <span class="navigation__action">
-            <i @click="addCity" class="fa fa-plus"></i>
-            Add city
-          </span>
-          <span class="navigation__action">
-            <i @click="handleSignOut" class="fa fa-sign-out-alt"></i>
-            Exit
-          </span>
+        <h2 class="navigation__title">{{ $t('nav.title') }}</h2>
+        <div class="navigation__locale-changer">
+          <select class="navigation__select" v-model="$i18n.locale">
+            <option @click="handleClick()"
+                    v-for="locale in $i18n.availableLocales"
+                    :key="`locale-${locale}`"
+                    :value="locale">
+              {{ locale }}
+            </option>
+          </select>
         </div>
       </div>
     </nav>
@@ -30,13 +22,25 @@
         <router-link class="navigation__router-link" :to="{name: 'AddCity'}">
           <i class="fa fa-arrow-left"></i>
         </router-link>
-        <h2 class="navigation__title">
-          {{ new Date().toLocaleString('en-GB', { weekday: 'short' }) }}
-          {{ new Date().toLocaleString('en-GB', { month: 'short' }) }}
-          {{ new Date().toLocaleString('en-GB', { day: '2-digit' }) }}
-        </h2>
-        <div class="navigation__actions">
-          <span>&deg;C</span>
+        <div>
+          <h2 v-if="$i18n.locale === 'en'" class="navigation__title">
+            {{ new Date().toLocaleString('en-GB', {weekday: 'short'}) }}
+            {{ new Date().toLocaleString('en-GB', {month: 'short'}) }}
+            {{ new Date().toLocaleString('en-GB', {day: '2-digit'}) }}
+          </h2>
+          <h2 v-if="$i18n.locale === 'ru'" class="navigation__title">
+            {{ new Date().toLocaleString('ru-RU', {day: '2-digit'}) }}
+            {{ new Date().toLocaleString('ru-RU', {month: 'short'}) }}
+            {{ new Date().toLocaleString('ru-RU', {weekday: 'short'}) }}
+          </h2>
+        </div>
+        <div class="navigation__locale-changer">
+          <select class="navigation__select" v-model="$i18n.locale">
+            <option v-for="locale in $i18n.availableLocales"
+                    :key="`locale-${locale}`"
+                    :value="locale">{{ locale }}
+            </option>
+          </select>
         </div>
       </div>
     </nav>
@@ -45,32 +49,14 @@
 </template>
 
 <script>
-import { signOut } from 'firebase/auth'
 
 export default {
   name: "Navigation",
-  props: ['addCityActive', 'isDay', 'isNight', 'auth'],
-  methods: {
-    addCity() {
-      this.$emit('add-city')
-    },
-    reloadApp() {
-      location.reload()
-    },
-    editCities() {
-      this.$refs.editCities.classList.toggle('is-active')
-      this.$emit('edit-cities')
-    },
-    handleSignOut() {
-      signOut(this.auth).then(() => {
-        this.$router.push('/login')
-      })
-    }
-  }
+  props: ['addCityActive', 'isDay', 'isNight', 'authPage']
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
 .navigation {
 
@@ -85,6 +71,11 @@ export default {
     background: #313640;
     padding: 16px;
 
+    &_footer {
+      bottom: 0;
+      padding: 8px 16px;
+    }
+
     &.day {
       transition: .5s ease all;
       background-color: #3296F9;
@@ -96,6 +87,10 @@ export default {
     }
   }
 
+  &__title {
+    text-transform: capitalize;
+  }
+
   &__router-link {
     color: #fff;
   }
@@ -103,14 +98,16 @@ export default {
   &__actions {
     display: flex;
     align-items: center;
+    justify-content: space-around;
+    width: 100%;
   }
 
   &__action {
-    margin-left: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     font-size: 12px;
+    text-align: center;
 
     i {
       font-size: 18px;
@@ -119,6 +116,41 @@ export default {
       &.is-active {
         color: #D24B4B;
       }
+    }
+  }
+
+  &__select {
+    display: block;
+    font-size: 16px;
+    font-family: sans-serif;
+    font-weight: 700;
+    color: #313640;;
+    line-height: 1.3;
+    padding: .6em 1.4em .5em .8em;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0, 0, 0, .04);
+    border-radius: .5em;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+
+
+    &::-ms-expand {
+      display: none;
+    }
+
+    &:hover {
+      border-color: #313640;
+    }
+
+    &:focus {
+      border-color: #313640;
+      color: #313640;
+      outline: none;
     }
   }
 }

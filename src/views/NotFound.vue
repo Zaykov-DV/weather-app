@@ -2,8 +2,8 @@
   <div class="not-found">
     <div class="not-found__container">
       <img class="not-found__image" src="../assets/error-404.png" alt="error-404">
-      <h3 class="not-found__title">404 Not Found</h3>
-      <router-link class="not-found__router-link" :to="{ name: 'AddCity' }">Back to home</router-link>
+      <h3 class="not-found__title">{{ $t("notFound.text") }}</h3>
+      <router-link class="not-found__router-link" :to="{ name: 'AddCity' }">{{ $t("notFound.route") }}</router-link>
     </div>
   </div>
 
