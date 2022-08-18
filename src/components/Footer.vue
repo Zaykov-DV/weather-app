@@ -3,8 +3,8 @@
     <nav class="navigation">
       <div class="navigation__container navigation__container_footer">
         <div class="navigation__actions">
-          <span class="navigation__action">
-            <i @click="editCities" ref="editCities" class="fa fa-edit"></i>
+          <span class="navigation__action" ref="isEdit">
+            <i @click="editCities" class="fa fa-edit"></i>
             {{ $t('nav.edit') }}
           </span>
           <span class="navigation__action">
@@ -12,7 +12,7 @@
             {{ $t('nav.refresh') }}
           </span>
           <span class="navigation__action">
-            <i @click="addCity" class="fa fa-plus"></i>
+            <i @click="$emit('add-city')" class="fa fa-plus"></i>
             {{ $t('nav.add') }}
           </span>
           <span class="navigation__action">
@@ -25,32 +25,36 @@
   </footer>
 </template>
 
-<script>
-import { signOut } from "firebase/auth";
+<script setup>
+import { getAuth, signOut } from "firebase/auth";
+import { defineProps, defineEmits, ref } from 'vue'
+import { useRouter } from "vue-router";
 
-export default {
-  name: "Footer",
-  props: ['addCityActive', 'auth'],
-  methods: {
-    addCity() {
-      this.$emit('add-city')
-    },
-    reloadApp() {
-      location.reload()
-    },
-    editCities() {
-      this.$refs.editCities.classList.toggle('is-active')
-      this.$emit('edit-cities')
-    },
-    handleSignOut() {
-      signOut(this.auth).then(() => {
-        this.$router.push('/login')
-      })
-    }
-  }
+defineProps({
+  addCityActive: Boolean,
+})
+
+const emit = defineEmits(['edit-cities', 'add-city'])
+
+const isEdit = ref(null)
+const router = useRouter()
+
+const reloadApp = () => {
+  location.reload()
 }
+
+const editCities = () => {
+  isEdit.value.classList.toggle('is-active')
+  emit('edit-cities')
+}
+
+const handleSignOut = () => {
+  const auth = getAuth()
+
+  signOut(auth)
+      .then(() => {
+    router.push({name: 'Login'})
+  })
+}
+
 </script>
-
-<style scoped>
-
-</style>

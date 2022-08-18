@@ -1,8 +1,7 @@
 <template>
   <main class="main">
     <div class="main__container">
-      <Navigation :auth="auth"
-                  :addCityActive="addCityActive"
+      <Navigation :addCityActive="addCityActive"
                   :authPage="authPage"
                   :userId="userId"
                   :isDay="isDay"
@@ -24,141 +23,132 @@
                    v-on:resetDays="resetDays"
                    v-on:add-city="toggleModal"
       />
-      <Loading v-if="loading" />
+      <Loading v-if="loading"/>
       <Footer v-if="!authPage"
               :addCityActive="addCityActive"
               v-on:add-city="toggleModal"
-              v-on:edit-cities="toggleEdit"
-              :auth="auth"/>
+              v-on:edit-cities="toggleEdit"/>
     </div>
   </main>
 </template>
 
-<script>
-import axios from 'axios'
-import db from './firebase/firebaseInit'
+<script setup>
 import Navigation from "@/components/Navigation";
 import Modal from "@/components/UI/Modal";
 import Loading from "@/components/UI/Loading";
+import Footer from "./components/Footer";
+
+import axios from 'axios'
+import db from './firebase/firebaseInit'
 import firebase from "firebase/compat";
 import 'firebase/auth'
 import { getAuth } from "firebase/auth";
-import Footer from "./components/Footer";
 
-export default {
-  name: 'App',
-  components: {
-    Footer, Loading, Navigation, Modal
-  },
-  data() {
-    return {
-      APIkey: '215522eb8b33fb9868dcd0b9043f15c8',
-      cities: [],
-      citiesFilter: [],
-      modalOpen: false,
-      edit: false,
-      addCityActive: true,
-      isDay: null,
-      isNight: null,
-      loading: true,
-      userId: '',
-      isLoggedIn: false,
-      auth: null,
-      authPage: false,
-      lang: null
-    }
-  },
-  created() {
-    this.getCityWeather()
-  },
-  methods: {
-    toggleModal() {
-      this.modalOpen = !this.modalOpen
-    },
-    toggleEdit() {
-      this.edit = !this.edit
-    },
-    checkRoute() {
-      this.addCityActive = this.$route.name === 'AddCity';
-    },
-    checkAuthRoute() {
-      this.authPage = this.$route.name === 'Login' || this.$route.name === 'Register' || this.$route.name === 'NotFound'
-    },
-    getUserId(data) {
-      this.userId = data;
-    },
-    getCityWeather() {
-      let firebaseDB = db.collection('cities')
-      this.auth = getAuth();
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          this.isLoggedIn = true
-          // User logged in already or has just logged in.
-          console.log('User logged in or has just logged out.')
-          console.log(user.uid);
-          this.userId = user.uid
-          this.$emit('getUserId', user.uid)
-        } else {
-          this.isLoggedIn = false
-          // User not logged in or has just logged out.
-          console.log('User not logged in or has just logged out.')
-        }
-      });
+import { ref, onMounted, watchEffect } from 'vue'
+import { useRoute } from "vue-router";
 
-      firebaseDB.onSnapshot(snap => {
-        if (snap.docs.length === 0) this.loading = false
-        snap.docChanges().forEach(async (doc) => {
-          if (doc.type === 'added') {
-            try {
-              // получаем города из апи в firebase
-              const response = await axios
-                  .get(`https://api.openweathermap.org/data/2.5/weather?q=${doc.doc.data().city}&appid=${this.APIkey}&units=metric`)
-              // пушим из апи в firebase store
-              const data = response.data
-              this.loading = true
-              await firebaseDB.doc(doc.doc.id).update({
-                currentWeather: data,
-                id: doc.doc.id
-              })
-                  .then(() => {
-                    this.cities.push(doc.doc.data())
-                  })
-                  .then(() => {
-                    this.citiesFilter = this.cities.filter((city) => {
-                      return city.userId === this.userId
-                    })
-                  })
-                  .then(() => {
-                    this.loading = false
-                  })
-            } catch (error) {
-              console.log(error)
-            }
-          } else if (doc.type === 'removed') {
-            this.citiesFilter = this.citiesFilter.filter(city => city.id !== doc.doc.id)
-          }
-        })
-      })
+const APIkey = ref('215522eb8b33fb9868dcd0b9043f15c8')
+const cities = ref([])
+const citiesFilter = ref([])
+const modalOpen = ref(false)
+const edit = ref(false)
+const addCityActive = ref(true)
+const isDay = ref(null)
+const isNight = ref(null)
+const loading = ref(true)
+const userId = ref('')
+const isLoggedIn = ref(false)
+const auth = ref(null)
+const authPage = ref(false)
 
-    },
-    dayTime() {
-      this.isDay = !this.isDay
-    },
-    nightTime() {
-      this.isNight = !this.isNight
-    },
-    resetDays() {
-      this.isDay = false;
-      this.isNight = false;
-    }
-  },
-  watch: {
-    $route() {
-      this.checkRoute()
-      this.checkAuthRoute()
-    }
-  }
+const route = useRoute()
+
+onMounted(() => {
+  getCityWeather()
+})
+
+watchEffect(() => {
+  addCityActive.value = route.name === 'AddCity';
+  authPage.value = route.name === 'Login' || route.name === 'Register' || route.name === 'NotFound'
+})
+
+const toggleModal = () => {
+  modalOpen.value = !modalOpen.value
 }
+
+const toggleEdit = () => {
+  edit.value = !edit.value
+}
+
+const getUserId = (data) => {
+  userId.value = data;
+}
+
+const dayTime = () => {
+  isDay.value = !isDay.value
+}
+
+const nightTime = () => {
+  isNight.value = !isNight.value
+}
+const resetDays = () => {
+  isDay.value = false;
+  isNight.value = false;
+}
+
+const getCityWeather = () => {
+  let firebaseDB = db.collection('cities')
+  auth.value = getAuth();
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      isLoggedIn.value = true
+      // User logged in already or has just logged in.
+      console.log('User logged in or has just logged out.')
+      userId.value = user.uid
+      getUserId(user.uid)
+    } else {
+      isLoggedIn.value = false
+      // User not logged in or has just logged out.
+      console.log('User not logged in or has just logged out.')
+    }
+  });
+
+  firebaseDB.onSnapshot(snap => {
+    if (snap.docs.length === 0) loading.value = false
+    snap.docChanges().forEach(async (doc) => {
+      if (doc.type === 'added') {
+        try {
+          // получаем города из апи в firebase
+          const response = await axios
+              .get(`https://api.openweathermap.org/data/2.5/weather?q=${doc.doc.data().city}&appid=${APIkey.value}&units=metric`)
+          // пушим из апи в firebase store
+          const data = response.data
+          loading.value = true
+          await firebaseDB.doc(doc.doc.id).update({
+            currentWeather: data,
+            id: doc.doc.id
+          })
+              .then(() => {
+                cities.value.push(doc.doc.data())
+              })
+              .then(() => {
+                citiesFilter.value = cities.value.filter((city) => {
+                  return city.userId === userId.value
+                })
+              })
+              .then(() => {
+                loading.value = false
+              })
+        } catch (error) {
+          console.log(error)
+        }
+      } else if (doc.type === 'removed') {
+        citiesFilter.value = citiesFilter.value.filter(city => city.id !== doc.doc.id)
+      }
+    })
+  })
+}
+
 </script>
 
 <style lang="scss">

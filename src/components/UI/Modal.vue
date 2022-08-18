@@ -1,55 +1,59 @@
 <template>
   <div @click="closeModal" class="modal" ref="modal">
     <div class="modal__wrapper" ref="modalWrapper">
-      <label class="modal__label" for="city-name">Enter Location</label>
-      <input class="modal__input" type="text" id="city-name" placeholder="Search by city name" v-model="city">
-      <button @click="addCity" class="modal__button">Add</button>
+      <label class="modal__label" for="city-name">{{ $t('modal.title') }}</label>
+      <input class="modal__input" type="text" id="city-name" :placeholder="$t('modal.placeholder')" v-model="city">
+      <button @click="addCity" class="modal__button">{{ $t('modal.button') }}</button>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import axios from "axios";
 import db from '../../firebase/firebaseInit'
+import { ref, defineProps, defineEmits} from "vue";
 
-export default {
-  name: "Modal",
-  props: ['APIkey', 'cities', 'userId'],
-  data() {
-    return {
-      city: '',
-    }
-  },
-  methods: {
-    closeModal(e) {
-      if (e.target === this.$refs.modal) this.$emit('close-modal')
-    },
-    async addCity() {
-      if (this.city === '') {
-        alert('field cannot be empty')
-      } else if (this.cities.some(res => res.city === this.city.toLowerCase()) && this.cities.some(res => res.city.userId === this.userId())) {
-        alert(`${this.city[0].toUpperCase() + this.city.slice(1).toLowerCase()} already added`)
-      } else {
-        try {
-          const res = await axios
-              .get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=${this.APIkey}&units=metric`)
-          const data = await res.data
-          await db.collection('cities')
-              .doc()
-              .set({
-                city: this.city.toLowerCase(),
-                currentWeather: data,
-                userId: this.userId
-              })
-              .then(this.$emit('close-modal'))
-              .then(this.city = '')
-        } catch {
-          alert(`${this.city} doesn't exist`)
-        }
-      }
+
+const props = defineProps({
+  cities: Object,
+  userId: String,
+  APIkey: String,
+})
+
+const emit = defineEmits(['close-modal'])
+
+const city = ref('')
+const modal = ref(null)
+
+const closeModal = (e) => {
+  if (e.target === modal.value) emit('close-modal')
+}
+
+const addCity = async () => {
+  if (city.value === '') {
+    alert('field cannot be empty')
+  } else if (props.cities.some(res => res.city === city.value.toLowerCase()) && props.cities.some(res => res.city.userId === props.userId())) {
+    alert(`${city.value[0].toUpperCase() + city.value.slice(1).toLowerCase()} already added`)
+  } else {
+    try {
+      const res = await axios
+          .get(`https://api.openweathermap.org/data/2.5/weather?q=${city.value}&appid=${props.APIkey}&units=metric`)
+      const data = await res.data
+      await db.collection('cities')
+          .doc()
+          .set({
+            city: city.value.toLowerCase(),
+            currentWeather: data,
+            userId: props.userId
+          })
+          .then(emit('close-modal'))
+          .then(city.value = '')
+    } catch {
+      alert(`${city.value} doesn't exist`)
     }
   }
 }
+
 </script>
 
 <style lang="scss" scoped>

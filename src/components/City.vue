@@ -1,17 +1,17 @@
 <template>
   <div @click="goToWeather" class="city">
     <div class="city__container">
-      <i v-if="edit" ref="edit" @click="removeCity" class="city__delete far fa-trash-alt"></i>
-      <h4 class="city__weather-title">{{ this.city.city }}</h4>
+      <i v-if="edit" ref="isEdit" @click="removeCity" class="city__delete far fa-trash-alt"></i>
+      <h4 class="city__weather-title">{{ city.city }}</h4>
       <div class="city__weather-info">
-        <span class="city__weather-temp">{{ Math.round(this.city.currentWeather.main.temp) }} &deg;C</span>
+        <span class="city__weather-temp">{{ Math.round(city.currentWeather.main.temp) }} &deg;C</span>
         <img class="city__weather-icon"
-             :src="require(`../assets/conditions/${this.city.currentWeather.weather[0].icon}.svg`)"
+             :src="require(`../assets/conditions/${city.currentWeather.weather[0].icon}.svg`)"
              alt="weather-icon">
       </div>
       <div class="city__video-wrapper">
         <video autoplay loop muted playsinline preload="metadata" class="city__video"
-               :src="require(`../assets/videos/${this.city.currentWeather.weather[0].icon}.mp4`)"
+               :src="require(`../assets/videos/${city.currentWeather.weather[0].icon}.mp4`)"
                alt="weather-icon"></video>
       </div>
     </div>
@@ -19,41 +19,42 @@
 
 </template>
 
-<script>
+<script setup>
 import db from '../firebase/firebaseInit'
+import { defineProps, ref } from "vue";
+import {useRouter} from "vue-router";
 
-export default {
-  name: "City",
-  props: ['city', 'edit', 'userId'],
-  data() {
-    return {
-      id: null
-    }
-  },
-  methods: {
-    removeCity() {
-      db.collection('cities')
-          .where('city', '==', `${this.city.city}`)
-          .where('userId', '==', `${this.userId}`)
-          .get()
-          .then(docs => {
-            docs.forEach(doc => {
-              this.id = doc.id
-            })
-          })
-          .then(() => {
-              db.collection('cities').doc(this.id).delete()
-          })
-    },
-    goToWeather(e) {
-      if (e.target === this.$refs.edit) {
-        //
-      } else {
-        this.$router.push({name: 'Weather', params: {city: this.city.city}})
-      }
-    }
-  }
+
+const props = defineProps({
+  city: Object,
+  edit: Boolean,
+  userId: String,
+})
+
+const id = ref(null)
+const router = useRouter()
+const isEdit = ref(null)
+
+const removeCity = () => {
+  db.collection('cities')
+      .where('city', '==', `${props.city.city}`)
+      .where('userId', '==', `${props.userId}`)
+      .get()
+      .then(docs => {
+        console.log(docs)
+        docs.forEach(doc => {
+          id.value = doc.id
+        })
+      })
+      .then(() => {
+        db.collection('cities').doc(id.value).delete()
+      })
 }
+
+const goToWeather = () => {
+  if (props.edit !== true ) router.push({name: 'Weather', params: {city: props.city.city}})
+}
+
 </script>
 
 <style lang="scss" scoped>

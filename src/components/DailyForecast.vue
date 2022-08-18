@@ -2,29 +2,30 @@
   <div class="daily-forecast">
     <div class="daily-forecast__container">
       <div class="daily-forecast__day">
-        <span v-if="$i18n.locale === 'en'">{{ new Date(this.day.dt * 1000).toLocaleString('en-us', { weekday: 'long' }) }}</span>
-        <span v-if="$i18n.locale === 'ru'">{{ new Date(this.day.dt * 1000).toLocaleString('ru-ru', { weekday: 'long' }) }}</span>
+        <span v-if="$i18n.locale === 'en'">{{ new Date(day.dt * 1000).toLocaleString('en-us', { weekday: 'long' }) }}</span>
+        <span v-if="$i18n.locale === 'ru'">{{ new Date(day.dt * 1000).toLocaleString('ru-ru', { weekday: 'long' }) }}</span>
       </div>
       <div class="daily-forecast__condition">
         <img class="daily-forecast__icon"
-             :src="require(`../assets/conditions/${this.day.weather[0].icon}.svg`)"
+             :src="require(`../assets/conditions/${day.weather[0].icon}.svg`)"
              alt="temp-icon">
       </div>
       <div class="daily-forecast__temperature">
-        <b class="daily-forecast__high-temp">{{Math.round(this.day.temp.max)}}&deg;C</b> &nbsp;
+        <b class="daily-forecast__high-temp">{{Math.round(day.temp.max)}}&deg;C</b> &nbsp;
       </div>
       <div class="daily-forecast__temperature">
-        <span class="daily-forecast__low-temp">{{Math.round(this.day.temp.min)}}&deg;C</span>
+        <span class="daily-forecast__low-temp">{{Math.round(day.temp.min)}}&deg;C</span>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "DailyForecast",
-  props: ['day'],
-}
+<script setup>
+import { defineProps } from "vue";
+
+defineProps({
+  day: Object,
+})
 </script>
 
 <style lang="scss" scoped>

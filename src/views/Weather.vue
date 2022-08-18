@@ -18,68 +18,70 @@
 
 </template>
 
-<script>
+<script setup>
 import axios from "axios";
 import db from '../firebase/firebaseInit'
 import CurrentWeather from '@/components/CurrentWeather'
 import HourlyWeather from '@/components/HourlyWeather'
 import WeeklyForecast from '@/components/WeeklyForecast'
 import AdditionalInfo from '@/components/AdditionalInfo'
+import {ref, defineEmits, defineProps, onMounted, onUnmounted} from "vue";
+import {useRoute} from "vue-router";
 
-export default {
-  name: "Weather",
-  props: ['APIkey', 'isDay', 'isNight', 'userid'],
-  components: {
-    CurrentWeather,
-    HourlyWeather,
-    WeeklyForecast,
-    AdditionalInfo
-  },
-  data() {
-    return {
-      forecast: null,
-      currentWeather: null,
-      loading: true,
-      currentTime: null
-    }
-  },
-  created() {
-    this.getWeather()
-  },
-  unmounted() {
-    this.$emit('resetDays')
-  },
-  methods: {
-    getWeather() {
-      db.collection('cities')
-          .where('city', '==', `${this.$route.params.city}`)
-          .get()
-          .then((docs) => {
-            docs.forEach(doc => {
-              this.currentWeather = doc.data().currentWeather
-              axios
-                  .get(`https://api.openweathermap.org/data/2.5/onecall?lat=${doc.data().currentWeather.coord.lat}&lon=${doc.data().currentWeather.coord.lon}&exclude=current,minutley,alerts&units=metric&appid=${this.APIkey}`)
-                  .then(res => this.forecast = res.data)
-                  .then(() => {
-                    this.loading = false
-                  })
-            })
-          })
-          .then(() => {
-            this.getCurrentTime()
-          })
-    },
-    getCurrentTime() {
-      const dateObject = new Date();
-      this.currentTime = dateObject.getHours();
-      const sunrise = new Date(this.currentWeather.sys.sunrise * 1000).getHours()
-      const sunset = new Date(this.currentWeather.sys.sunset * 1000).getHours()
-      if (this.currentTime > sunrise && this.currentTime < sunset) {
-        this.$emit('is-day')
-      } else {
-        this.$emit('is-night')
-      }
-    }
+
+const props = defineProps({
+  APIkey: String,
+  isDay: Boolean || null,
+  isNight: Boolean || null,
+  userid: String,
+})
+
+const emit = defineEmits(['resetDays', 'is-day', 'is-night'])
+
+const forecast = ref(null)
+const currentWeather = ref(null)
+const loading = ref(true)
+const currentTime = ref(null)
+
+const route = useRoute()
+
+onMounted(() => {
+  getWeather()
+})
+
+onUnmounted(() => {
+  emit('resetDays')
+})
+
+const getWeather = () => {
+  db.collection('cities')
+      .where('city', '==', `${route.params.city}`)
+      .get()
+      .then((docs) => {
+        docs.forEach(doc => {
+          currentWeather.value = doc.data().currentWeather
+          axios
+              .get(`https://api.openweathermap.org/data/2.5/onecall?lat=${doc.data().currentWeather.coord.lat}&lon=${doc.data().currentWeather.coord.lon}&exclude=current,minutley,alerts&units=metric&appid=${props.APIkey}`)
+              .then(res => forecast.value = res.data)
+              .then(() => {
+                loading.value = false
+              })
+        })
+      })
+      .then(() => {
+        getCurrentTime()
+      })
+}
+
+const getCurrentTime = () => {
+  const dateObject = new Date();
+  currentTime.value = dateObject.getHours();
+  const sunrise = new Date(currentWeather.value.sys.sunrise * 1000).getHours()
+  const sunset = new Date(currentWeather.value.sys.sunset * 1000).getHours()
+  if (currentTime.value > sunrise && currentTime.value < sunset) {
+    emit('is-day')
+  } else {
+    emit('is-night')
   }
 }
 </script>
