@@ -8,24 +8,18 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import HourlyTemp from '@/components/HourlyTemp'
+import {computed, defineProps} from "vue";
 
-export default {
-  name: "HourlyWeather",
-  props: ['forecast'],
-  components: {
-    HourlyTemp
-  },
-  created() {
-    console.log(this.forecast)
-  },
-  computed: {
-    filteredList() {
-      return this.forecast.hourly.slice(0, 23)
-    }
-  }
-}
+const props = defineProps({
+  forecast: Object,
+})
+
+const filteredList = computed(() => {
+  return props.forecast.hourly.slice(0, 23)
+})
+
 </script>
 
 <style lang="scss" scoped>

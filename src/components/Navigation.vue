@@ -48,12 +48,27 @@
 
 </template>
 
-<script>
+<script setup>
 
-export default {
-  name: "Navigation",
-  props: ['addCityActive', 'isDay', 'isNight', 'authPage']
-}
+defineProps({
+  addCityActive: {
+    type: Boolean,
+    default: false
+  },
+  isDay: {
+    type: Boolean,
+    default: false
+  },
+  isNight: {
+    type: Boolean,
+    default: false
+  },
+  authPage: {
+    type: Boolean,
+    default: false
+  },
+})
+
 </script>
 
 <style lang="scss">
@@ -112,10 +127,10 @@ export default {
     i {
       font-size: 18px;
       padding-bottom: 4px;
+    }
 
-      &.is-active {
-        color: #D24B4B;
-      }
+    &.is-active {
+      color: #D24B4B;
     }
   }
 

@@ -8,18 +8,18 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import DailyForecast from '@/components/DailyForecast'
-export default {
-  name: "WeeklyForecast",
-  props: ['forecast'],
-  components: {DailyForecast},
-  computed: {
-    filteredList() {
-      return this.forecast.daily.slice(1, 8)
-    }
-  }
-}
+import {computed, defineProps} from "vue";
+
+const props = defineProps({
+  forecast: Object,
+})
+
+const filteredList = computed(() => {
+  return props.forecast.daily.slice(1, 8)
+})
+
 </script>
 
 <style lang="scss" scoped>

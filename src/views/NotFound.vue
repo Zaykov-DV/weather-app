@@ -6,10 +6,10 @@
       <router-link class="not-found__router-link" :to="{ name: 'AddCity' }">{{ $t("notFound.route") }}</router-link>
     </div>
   </div>
-
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
+
 .not-found {
   &__container {
     display: flex;

@@ -2,25 +2,25 @@
   <div class="current-weather">
     <div class="current-weather__container">
       <div class="current-weather__wrapper">
-        <h4 class="current-weather__city">{{ this.currentWeather.name }}</h4>
+        <h4 class="current-weather__city">{{ currentWeather.name }}</h4>
         <div class="current-weather__info">
-          <span class="current-weather__curr-temp">{{ Math.round(this.currentWeather.main.temp) }}&deg;C</span>
+          <span class="current-weather__curr-temp">{{ Math.round(currentWeather.main.temp) }}&deg;C</span>
         </div>
         <div class="current-weather__high-low-temp">
           <div class="current-weather__high-temp">
             <i class="fas fa-chevron-up"></i>
-            <span>{{ Math.round(this.currentWeather.main.temp_max) }}&deg;C</span>
+            <span>{{ Math.round(currentWeather.main.temp_max) }}&deg;C</span>
           </div>
           <div class="current-weather__low-temp">
             <i class="fas fa-chevron-down"></i>
-            <span>{{ Math.round(this.currentWeather.main.temp_min) }}&deg;C</span>
+            <span>{{ Math.round(currentWeather.main.temp_min) }}&deg;C</span>
           </div>
         </div>
         <div class="current-weather__condition">
-          <span>{{ this.currentWeather.weather[0].description }}</span>
+          <span>{{ currentWeather.weather[0].description }}</span>
         </div>
         <div class="current-weather__feels-like">
-          <span>{{ $t('info.feels') }} {{ Math.round(this.currentWeather.main.feels_like) }}&deg;C</span>
+          <span>{{ $t('info.feels') }} {{ Math.round(currentWeather.main.feels_like) }}&deg;C</span>
         </div>
       </div>
       <div class="current-weather__icon">
@@ -31,12 +31,14 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { defineProps } from "vue";
 
-export default {
-  name: "CurrentWeather",
-  props: ['isDay', 'isNight', 'currentWeather']
-}
+defineProps({
+  currentWeather: Object,
+  isDay: Boolean || null,
+  isNight: Boolean || null,
+})
 
 </script>
 

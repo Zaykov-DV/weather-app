@@ -41,6 +41,11 @@ const messages = {
             wind: 'Ветер',
             pressure: 'Давление',
             feels: 'Ощущается как '
+        },
+        modal: {
+            title: 'Добавьте город',
+            placeholder: 'Поиск...',
+            button: 'Добавить'
         }
     },
     en: {
@@ -85,6 +90,11 @@ const messages = {
             wind: 'Wind',
             pressure: 'Pressure',
             feels: 'Feels like '
+        },
+        modal: {
+            title: 'Enter Location',
+            placeholder: 'Search by city name',
+            button: 'Add'
         }
     }
 }

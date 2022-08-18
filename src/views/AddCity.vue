@@ -4,35 +4,24 @@
         <City v-for="(city, index) in cities" :key="index" :city="city" :edit="edit" :userId="userId"/>
       <div class="add-city__empty" v-if="cities.length === 0">
         <p class="add-city__text">{{ $t('main.noCities') }}</p>
-        <button class="add-city__button" @click="addCity">{{ $t('main.add') }}</button>
+        <button class="add-city__button" @click="$emit('add-city')">{{ $t('main.add') }}</button>
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import City from "@/components/City";
+import {defineProps, defineEmits} from "vue";
 
-export default {
-  name: 'AddCity',
-  components: { City },
-  props: {
-    cities: Array,
-    edit: Boolean,
-    userId: String
-},
+defineProps({
+  cities: Array,
+  edit: Boolean,
+  userId: String
+})
 
-  setup(_, {emit}) {
+defineEmits(['add-city'])
 
-    const addCity = (event) => {
-      emit("add-city", event.target.value)
-    }
-
-    return {
-      addCity
-    }
-  }
-}
 </script>
 
 <style lang="scss" scoped>
